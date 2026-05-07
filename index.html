@@ -3,57 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sensi Master 🎯 - Auxílio Pro</title>
+<title>Sensi Master Pro 🎯</title>
 <style>
-*{ box-sizing:border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body{ margin:0; height:100vh; overflow:hidden; background:#000; color:#fff; display:flex; align-items:center; justify-content:center; }
-
-/* Fundo com efeito de constelação/pontos igual à imagem */
-canvas{ position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; opacity: 0.5; }
+*{ box-sizing:border-box; font-family: sans-serif; }
+body{ margin:0; height:100vh; background:#000; color:#fff; display:flex; align-items:center; justify-content:center; overflow: hidden; }
+canvas{ position:fixed; top:0; left:0; z-index:0; opacity: 0.4; }
 
 .panel{ 
- position:relative; z-index:2; width:360px; 
- background:rgba(10, 10, 10, 0.95); 
- border: 1px solid #333; border-radius:15px; 
- padding:25px; box-shadow: 0 0 30px rgba(0,0,0,0.5);
- text-align: center;
+ position:relative; z-index:2; width:90%; max-width:380px; 
+ background:rgba(15, 15, 15, 0.98); border: 1px solid #333; 
+ border-radius:20px; padding:25px; text-align: center;
 }
 
-h2 { font-size: 1.4rem; margin-bottom: 5px; color: #fff; }
-p { font-size: 0.85rem; color: #aaa; margin-bottom: 25px; }
+h2 { font-size: 1.5rem; margin-bottom: 5px; }
+p { font-size: 0.8rem; color: #888; margin-bottom: 20px; }
 
-/* Estilo dos Seletores */
-select, button { 
- width: 100%; padding: 14px; margin-top: 12px; 
- border-radius: 10px; border: 1px solid #444; 
- background: #111; color: #fff; font-size: 14px; outline: none;
+select { 
+ width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; 
+ border: 1px solid #444; background: #111; color: #fff; outline: none;
 }
 
-select:focus { border-color: #fff; }
+/* Botões de Nível de Sensi */
+.btn-group { display: flex; gap: 8px; margin-top: 20px; }
+.btn-opt { 
+ flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #444;
+ background: #111; color: #fff; cursor: pointer; font-size: 11px; transition: 0.3s;
+}
+.btn-opt.active { background: #fff; color: #000; border-color: #fff; font-weight: bold; }
 
-button { 
- background: #fff; color: #000; font-weight: bold; 
- border: none; cursor: pointer; margin-top: 20px;
- transition: 0.3s;
+#btnGerar { 
+ width: 100%; padding: 14px; margin-top: 20px; border-radius: 10px;
+ border: none; background: #fff; color: #000; font-weight: bold; cursor: pointer;
 }
 
-button:active { transform: scale(0.98); }
-
-/* Card de Resultado */
 .result-box {
- margin-top: 25px; padding: 15px;
- background: rgba(255, 255, 255, 0.03);
- border: 1px solid #222; border-radius: 12px;
- text-align: left; display: none;
- animation: fadeIn 0.5s ease;
+ margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.03);
+ border: 1px solid #222; border-radius: 12px; text-align: left; display: none;
 }
-
-.result-box div { margin: 8px 0; font-size: 13px; color: #ddd; }
+.result-box div { margin: 8px 0; font-size: 13px; color: #bbb; border-bottom: 1px solid #1a1a1a; padding-bottom: 4px; }
 .result-box b { color: #fff; float: right; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.footer { margin-top: 20px; font-size: 10px; color: #444; }
+.dpi-txt { color: #00ff99 !important; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -62,106 +51,116 @@ button:active { transform: scale(0.98); }
 
 <div class="panel">
     <h2>Sensibilidade / Auxílio</h2>
-    <p>Configure a sensibilidade para usar</p>
+    <p>Escolha seu dispositivo e o tipo de sensibilidade</p>
 
-    <!-- Seleção de Marca -->
-    <select id="marca" onchange="atualizarModelos()">
+    <select id="marca" onchange="carregarModelos()">
         <option value="">Selecione a Marca</option>
         <option value="Xiaomi">Xiaomi</option>
         <option value="Samsung">Samsung</option>
-        <option value="iPhone">iPhone</option>
+        <option value="Apple">iPhone</option>
         <option value="Motorola">Motorola</option>
         <option value="Realme">Realme</option>
+        <option value="Infinix">Infinix</option>
+        <option value="Huawei">Huawei</option>
     </select>
 
-    <!-- Seleção de Modelo -->
     <select id="modelo">
         <option value="">Selecione o Modelo</option>
     </select>
 
-    <button onclick="gerarSensi()">Gerar</button>
+    <div class="btn-group">
+        <button class="btn-opt" onclick="setNivel('Baixa', this)">Sensi Baixa</button>
+        <button class="btn-opt active" onclick="setNivel('Média', this)">Sensi Média</button>
+        <button class="btn-opt" onclick="setNivel('Alta', this)">Sensi Alta</button>
+    </div>
 
-    <!-- Resultado da Sensi -->
+    <button id="btnGerar" onclick="gerarConfig()">Gerar Configuração</button>
+
     <div class="result-box" id="result">
         <div>Modelo: <b id="resMod">--</b></div>
         <div>Geral: <b id="resGeral">--</b></div>
         <div>Ponto Vermelho: <b id="resRed">--</b></div>
         <div>Mira 2x: <b id="res2x">--</b></div>
         <div>Mira 4x: <b id="res4x">--</b></div>
-        <div>Tamanho do Botão: <b id="resBtn">--</b></div>
-        <div style="border-top: 1px solid #222; padding-top: 10px; margin-top: 10px; color: #00ff99;">
-            DPI Recomendada: <b id="resDpi" style="color: #00ff99;">--</b>
-        </div>
+        <div>Botão de Tiro: <b id="resBtn">--</b></div>
+        <div class="dpi-txt">DPI Recomendada: <b id="resDpi" class="dpi-txt">--</b></div>
     </div>
-
-    <div class="footer">Desenvolvido para otimização de hardware</div>
 </div>
 
 <script>
-// Dados de modelos
-const modelosPorMarca = {
-    "Xiaomi": ["Poco X5 Pro", "Redmi Note 11", "Poco F4", "Xiaomi 13C"],
-    "Samsung": ["Galaxy S23 Ultra", "A54 5G", "S20 FE", "A14"],
-    "iPhone": ["iPhone 13", "iPhone 11", "iPhone 15 Pro", "iPhone XR"],
-    "Motorola": ["Moto G52", "Edge 40", "Moto G84"],
-    "Realme": ["Realme C67", "Realme GT Master"]
+let nivelSelecionado = "Média";
+
+const dadosCelulares = {
+    "Xiaomi": ["Poco X5 Pro", "Poco F5", "Redmi Note 12", "Redmi Note 11", "Xiaomi 13 Ultra", "Poco X3 Pro", "Xiaomi 12 Lite"],
+    "Samsung": ["S23 Ultra", "S22 FE", "A54 5G", "A34", "A14", "S20 FE", "M54", "A73"],
+    "Apple": ["iPhone 15 Pro Max", "iPhone 14", "iPhone 13", "iPhone 12", "iPhone 11", "iPhone XR", "iPhone 8 Plus"],
+    "Motorola": ["Edge 40", "Moto G84", "Moto G54", "Edge 30 Fusion", "Moto G23", "Moto G73"],
+    "Realme": ["Realme C67", "Realme 11 Pro+", "Realme GT Master", "Realme C55", "Realme 9i"],
+    "Infinix": ["Note 30 Pro", "Hot 30", "Zero Ultra"],
+    "Huawei": ["P60 Pro", "Mate 50 Pro", "Nova 11"]
 };
 
-function atualizarModelos() {
+function carregarModelos() {
     const marca = document.getElementById('marca').value;
-    const comboModelo = document.getElementById('modelo');
-    comboModelo.innerHTML = '<option value="">Selecione o Modelo</option>';
-    
-    if(marca && modelosPorMarca[marca]) {
-        modelosPorMarca[marca].forEach(mod => {
-            let opt = document.createElement('option');
-            opt.value = mod; opt.innerText = mod;
-            comboModelo.appendChild(opt);
+    const selectMod = document.getElementById('modelo');
+    selectMod.innerHTML = '<option value="">Selecione o Modelo</option>';
+    if(marca) {
+        dadosCelulares[marca].sort().forEach(m => {
+            selectMod.innerHTML += `<option value="${m}">${m}</option>`;
         });
     }
 }
 
-function gerarSensi() {
+function setNivel(nivel, el) {
+    nivelSelecionado = nivel;
+    document.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function gerarConfig() {
     const mod = document.getElementById('modelo').value;
-    if(!mod) return alert("Por favor, selecione o modelo do seu celular.");
+    if(!mod) return alert("Selecione o modelo!");
 
-    // Lógica de Sensi "Pro" (Valores otimizados para cada tipo)
+    let g, r, m2, m4, btn, dpi;
+
+    // Lógica por nível de sensibilidade
+    if(nivelSelecionado === "Baixa") {
+        g = rand(88, 92); r = rand(80, 88); m2 = rand(75, 82); m4 = rand(70, 78); 
+        btn = rand(55, 62); dpi = rand(400, 520);
+    } else if(nivelSelecionado === "Média") {
+        g = rand(93, 97); r = rand(89, 94); m2 = rand(85, 91); m4 = rand(80, 88); 
+        btn = rand(45, 54); dpi = rand(550, 680);
+    } else { // Alta
+        g = rand(98, 100); r = rand(95, 100); m2 = rand(92, 100); m4 = rand(90, 100); 
+        btn = rand(38, 46); dpi = rand(720, 960);
+    }
+
     document.getElementById('resMod').innerText = mod;
-    document.getElementById('resGeral').innerText = Math.floor(Math.random() * (100 - 94) + 94);
-    document.getElementById('resRed').innerText = Math.floor(Math.random() * (98 - 88) + 88);
-    document.getElementById('res2x').innerText = Math.floor(Math.random() * (95 - 82) + 82);
-    document.getElementById('res4x').innerText = Math.floor(Math.random() * (92 - 78) + 78);
-    document.getElementById('resBtn').innerText = Math.floor(Math.random() * (55 - 42) + 42) + "%";
-    document.getElementById('resDpi').innerText = Math.floor(Math.random() * (800 - 500) + 500);
-
+    document.getElementById('resGeral').innerText = g;
+    document.getElementById('resRed').innerText = r;
+    document.getElementById('res2x').innerText = m2;
+    document.getElementById('res4x').innerText = m4;
+    document.getElementById('resBtn').innerText = btn + "%";
+    document.getElementById('resDpi').innerText = dpi;
     document.getElementById('result').style.display = 'block';
 }
 
-// Efeito de Fundo (Simples animação de pontos)
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
+
+// Background (Chuva de pontos discretos)
 const canvas = document.getElementById('bg');
 const ctx = canvas.getContext('2d');
 let w, h;
-function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-window.onresize = resize; resize();
-
-const dots = Array(60).fill().map(() => ({
-    x: Math.random() * w, y: Math.random() * h, r: Math.random() * 2,
-    vx: Math.random() * 0.5 - 0.25, vy: Math.random() * 0.5 - 0.25
-}));
-
-function draw() {
-    ctx.clearRect(0,0,w,h);
-    ctx.fillStyle = "#444";
-    dots.forEach(d => {
-        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
-        d.x += d.vx; d.y += d.vy;
-        if(d.x<0 || d.x>w) d.vx *= -1; if(d.y<0 || d.y>h) d.vy *= -1;
-    });
-    requestAnimationFrame(draw);
+function res() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
+res(); window.onresize = res;
+const p = Array(50).fill().map(()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*0.5}));
+function draw(){
+ ctx.clearRect(0,0,w,h); ctx.fillStyle="#444";
+ p.forEach(i=>{ ctx.beginPath(); ctx.arc(i.x,i.y,1,0,7); ctx.fill(); i.y+=i.s; if(i.y>h)i.y=0; });
+ requestAnimationFrame(draw);
 }
 draw();
 </script>
-
 </body>
 </html>
 
