@@ -8,19 +8,12 @@
 *{ box-sizing:border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
 body{ margin:0; height:100vh; background:#000; color:#fff; display:flex; align-items:center; justify-content:center; overflow: hidden; }
 
-/* FUNDO ANIMADO PREMIUM */
 #canvas-bg { position:fixed; top:0; left:0; z-index:0; }
 
 .panel{ 
- position:relative; z-index:2; 
- width:95%; 
- max-width:450px; /* Painel ainda maior */
- min-height: 520px; 
- background:rgba(8, 8, 8, 0.98); 
- border: 1px solid #333; 
- border-radius:30px; 
- padding:40px; 
- text-align: center;
+ position:relative; z-index:2; width:95%; max-width:450px; 
+ background:rgba(8, 8, 8, 0.98); border: 1px solid #333; 
+ border-radius:30px; padding:40px; text-align: center;
  box-shadow: 0 0 50px rgba(0,0,0,0.9);
 }
 
@@ -37,12 +30,12 @@ select {
  flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #444;
  background: #111; color: #fff; cursor: pointer; font-size: 12px; transition: 0.3s;
 }
-.btn-opt.active { background: #fff; color: #000; border-color: #fff; font-weight: bold; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+.btn-opt.active { background: #fff; color: #000; border-color: #fff; font-weight: bold; }
 
 #btnGerar { 
  width: 100%; padding: 18px; margin-top: 30px; border-radius: 15px;
  border: none; background: #fff; color: #000; font-weight: 900; cursor: pointer; font-size: 17px;
- text-transform: uppercase; letter-spacing: 1px;
+ text-transform: uppercase;
 }
 
 .result-box {
@@ -55,9 +48,16 @@ select {
 .result-box div { margin: 12px 0; font-size: 15px; color: #bbb; border-bottom: 1px solid #1a1a1a; padding-bottom: 8px; }
 .result-box b { color: #fff; float: right; font-size: 16px; }
 
-/* Destaque para valores 100+ */
 .high-val { color: #ff3e3e !important; text-shadow: 0 0 10px rgba(255,62,62,0.5); }
 .dpi-txt { color: #00ff99 !important; font-weight: bold; border: none !important; }
+
+/* NOVO BOTÃO COPIAR */
+#btnCopiar {
+ width: 100%; padding: 14px; margin-top: 20px; border-radius: 12px;
+ border: 2px solid #fff; background: transparent; color: #fff; 
+ font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s;
+}
+#btnCopiar:active { background: #fff; color: #000; }
 </style>
 </head>
 <body>
@@ -75,7 +75,6 @@ select {
         <option value="Apple">iPhone</option>
         <option value="Motorola">Motorola</option>
         <option value="Realme">Realme</option>
-        <option value="Infinix">Infinix</option>
     </select>
 
     <select id="modelo">
@@ -98,29 +97,26 @@ select {
         <div>Mira 4x: <b id="res4x" class="high-val">--</b></div>
         <div>Botão de Tiro: <b id="resBtn">--</b></div>
         <div class="dpi-txt">DPI Recomendada: <b id="resDpi" class="dpi-txt">--</b></div>
+        
+        <button id="btnCopiar" onclick="copiarSensi()">Copiar Sensibilidade</button>
     </div>
 </div>
 
 <script>
 let nivelSelecionado = "Média";
 const dadosCelulares = {
-    "Xiaomi": ["Poco X5 Pro", "Poco F5", "Redmi Note 12", "Poco X3 Pro", "Xiaomi 13 Ultra", "Redmi 13C"],
-    "Samsung": ["S23 Ultra", "S22 FE", "A54 5G", "A34", "A14", "S20 FE", "M54"],
-    "Apple": ["iPhone 15 Pro Max", "iPhone 14", "iPhone 13", "iPhone 12", "iPhone 11", "iPhone 8 Plus"],
-    "Motorola": ["Edge 40", "Moto G84", "Moto G54", "Edge 30 Fusion", "Moto G73"],
-    "Realme": ["Realme C67", "Realme 11 Pro+", "Realme GT Master", "Realme C55"],
-    "Infinix": ["Note 30 Pro", "Hot 30", "Zero Ultra"]
+    "Xiaomi": ["Poco X5 Pro", "Poco F5", "Redmi Note 12", "Redmi 13C"],
+    "Samsung": ["A54 5G", "S23 Ultra", "S20 FE", "A14"],
+    "Apple": ["iPhone 15 Pro Max", "iPhone 13", "iPhone 11"],
+    "Motorola": ["Moto G84", "Edge 40", "Moto G54"],
+    "Realme": ["Realme C67", "Realme C55"]
 };
 
 function carregarModelos() {
     const marca = document.getElementById('marca').value;
     const selectMod = document.getElementById('modelo');
     selectMod.innerHTML = '<option value="">Selecione o Modelo</option>';
-    if(marca) {
-        dadosCelulares[marca].sort().forEach(m => {
-            selectMod.innerHTML += `<option value="${m}">${m}</option>`;
-        });
-    }
+    if(marca) { dadosCelulares[marca].sort().forEach(m => { selectMod.innerHTML += `<option value="${m}">${m}</option>`; }); }
 }
 
 function setNivel(nivel, el) {
@@ -133,21 +129,11 @@ function rand(min, max) { return Math.floor(Math.random() * (max - min + 1) + mi
 
 function gerarConfig() {
     const mod = document.getElementById('modelo').value;
-    if(!mod) return alert("Selecione o modelo primeiro!");
-    
+    if(!mod) return alert("Selecione o modelo!");
     let g, r, m2, m4, btn, dpi;
-
-    // Lógica para valores 100+ conforme solicitado
-    if(nivelSelecionado === "Baixa") {
-        g = rand(98, 105); r = rand(95, 102); m2 = rand(90, 98); m4 = rand(88, 95); 
-        btn = rand(55, 65); dpi = rand(500, 620);
-    } else if(nivelSelecionado === "Média") {
-        g = rand(105, 115); r = rand(102, 110); m2 = rand(98, 106); m4 = rand(95, 103); 
-        btn = rand(45, 52); dpi = rand(650, 850);
-    } else { // Sensi Alta (Modo Executor)
-        g = rand(120, 150); r = rand(115, 140); m2 = rand(110, 135); m4 = rand(105, 130); 
-        btn = rand(35, 44); dpi = rand(900, 1250);
-    }
+    if(nivelSelecionado === "Baixa") { g=rand(98,105); r=rand(95,102); m2=rand(90,98); m4=rand(88,95); btn=58; dpi=520; }
+    else if(nivelSelecionado === "Média") { g=rand(106,118); r=rand(103,112); m2=rand(99,108); m4=rand(96,105); btn=48; dpi=680; }
+    else { g=rand(120,150); r=rand(115,140); m2=rand(110,135); m4=rand(105,130); btn=38; dpi=960; }
 
     document.getElementById('resMod').innerText = mod;
     document.getElementById('resGeral').innerText = g;
@@ -159,57 +145,36 @@ function gerarConfig() {
     document.getElementById('result').style.display = 'block';
 }
 
-/* FUNDO ANIMADO MELHORADO */
+function copiarSensi() {
+    const mod = document.getElementById('resMod').innerText;
+    const g = document.getElementById('resGeral').innerText;
+    const r = document.getElementById('resRed').innerText;
+    const m2 = document.getElementById('res2x').innerText;
+    const m4 = document.getElementById('res4x').innerText;
+    const btn = document.getElementById('resBtn').innerText;
+    const dpi = document.getElementById('resDpi').innerText;
+
+    const textoSensi = `🎯 *SENSI MASTER PRO* 🎯\\n\\n📱 *Celular:* ${mod}\\n🚀 *Nível:* ${nivelSelecionado}\\n\\n🔘 *Geral:* ${g}\\n🔴 *Ponto Vermelho:* ${r}\\n🔭 *Mira 2x:* ${m2}\\n🔬 *Mira 4x:* ${m4}\\n\\n🎮 *Botão:* ${btn}\\n⚙️ *DPI:* ${dpi}\\n\\n_Gerado por Matheus Silva Gama_`;
+
+    navigator.clipboard.writeText(textoSensi).then(() => {
+        const btn = document.getElementById('btnCopiar');
+        btn.innerText = "COPIADO! ✅";
+        btn.style.borderColor = "#00ff99";
+        btn.style.color = "#00ff99";
+        setTimeout(() => {
+            btn.innerText = "Copiar Sensibilidade";
+            btn.style.borderColor = "#fff";
+            btn.style.color = "#fff";
+        }, 2000);
+    });
+}
+
 const canvas = document.getElementById('canvas-bg');
 const ctx = canvas.getContext('2d');
 let w, h, particles = [];
-
-function init() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-    particles = [];
-    for(let i=0; i<100; i++) {
-        particles.push({
-            x: Math.random() * w, y: Math.random() * h,
-            vx: (Math.random() - 0.5) * 0.8,
-            vy: (Math.random() - 0.5) * 0.8,
-            r: Math.random() * 2
-        });
-    }
-}
-
-function draw() {
-    ctx.clearRect(0,0,w,h);
-    ctx.fillStyle = "rgba(255,255,255,0.3)";
-    ctx.strokeStyle = "rgba(255,255,255,0.08)";
-    
-    particles.forEach((p, i) => {
-        p.x += p.vx; p.y += p.vy;
-        if(p.x<0 || p.x>w) p.vx *= -1;
-        if(p.y<0 || p.y>h) p.vy *= -1;
-        
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fill();
-        
-        for(let j=i+1; j<particles.length; j++) {
-            let p2 = particles[j];
-            let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-            if(dist < 130) {
-                ctx.lineWidth = 1 - dist/130;
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(p2.x, p2.y);
-                ctx.stroke();
-            }
-        }
-    });
-    requestAnimationFrame(draw);
-}
-
-window.onresize = init;
-init(); draw();
+function init() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; particles = []; for(let i=0; i<100; i++) { particles.push({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.8, vy: (Math.random()-0.5)*0.8, r: Math.random()*2 }); } }
+function draw() { ctx.clearRect(0,0,w,h); ctx.fillStyle="rgba(255,255,255,0.3)"; ctx.strokeStyle="rgba(255,255,255,0.08)"; particles.forEach((p, i) => { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); for(let j=i+1;j<particles.length;j++){ let p2=particles[j]; let dist=Math.hypot(p.x-p2.x,p.y-p2.y); if(dist<130){ ctx.lineWidth=1-dist/130; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p2.x,p2.y); ctx.stroke(); } } }); requestAnimationFrame(draw); }
+window.onresize = init; init(); draw();
 </script>
 </body>
 </html>
-  
