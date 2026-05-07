@@ -8,60 +8,56 @@
 *{ box-sizing:border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
 body{ margin:0; height:100vh; background:#000; color:#fff; display:flex; align-items:center; justify-content:center; overflow: hidden; }
 
-/* FUNDO ANIMADO */
 #canvas-bg { position:fixed; top:0; left:0; z-index:0; }
 
 .panel{ 
  position:relative; z-index:2; width:95%; max-width:450px; 
  background:rgba(8, 8, 8, 0.98); border: 1px solid #333; 
- border-radius:30px; padding:40px; text-align: center;
+ border-radius:30px; padding:35px; text-align: center;
  box-shadow: 0 0 50px rgba(0,0,0,0.9); transition: 0.5s;
 }
 
 .hidden { display: none; }
 
 h2 { font-size: 1.8rem; margin-bottom: 5px; font-weight: 800; }
-p { font-size: 0.9rem; color: #777; margin-bottom: 30px; }
+p { font-size: 0.85rem; color: #666; margin-bottom: 25px; }
 
-/* INPUTS E SELECTS */
 input, select { 
- width: 100%; padding: 16px; margin-top: 15px; border-radius: 12px; 
- border: 1px solid #444; background: #0c0c0c; color: #fff; outline: none; font-size: 15px;
+ width: 100%; padding: 14px; margin-top: 12px; border-radius: 12px; 
+ border: 1px solid #333; background: #0c0c0c; color: #fff; outline: none; font-size: 14px;
 }
-input::placeholder { color: #444; }
+input:focus, select:focus { border-color: #555; }
 
-/* BOTÕES */
-.btn-group { display: flex; gap: 10px; margin-top: 25px; }
+.btn-group { display: flex; gap: 8px; margin-top: 20px; }
 .btn-opt { 
- flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #444;
- background: #111; color: #fff; cursor: pointer; font-size: 12px; transition: 0.3s;
+ flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #333;
+ background: #111; color: #fff; cursor: pointer; font-size: 11px; transition: 0.3s;
 }
 .btn-opt.active { background: #fff; color: #000; border-color: #fff; font-weight: bold; }
 
 #btnMain { 
- width: 100%; padding: 18px; margin-top: 30px; border-radius: 15px;
- border: none; background: #fff; color: #000; font-weight: 900; cursor: pointer; font-size: 17px;
+ width: 100%; padding: 16px; margin-top: 25px; border-radius: 14px;
+ border: none; background: #fff; color: #000; font-weight: 900; cursor: pointer; font-size: 16px;
  text-transform: uppercase;
 }
 
-/* RESULTADO */
 .result-box {
- margin-top: 30px; padding: 25px; background: rgba(255, 255, 255, 0.02);
+ margin-top: 25px; padding: 22px; background: rgba(255, 255, 255, 0.02);
  border: 1px solid #222; border-radius: 20px; text-align: left; display: none;
  animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-@keyframes slideUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
 
-.result-box div { margin: 12px 0; font-size: 15px; color: #bbb; border-bottom: 1px solid #1a1a1a; padding-bottom: 8px; }
-.result-box b { color: #fff; float: right; font-size: 16px; }
+.result-box div { margin: 10px 0; font-size: 14px; color: #aaa; border-bottom: 1px solid #161616; padding-bottom: 6px; }
+.result-box b { color: #fff; float: right; font-size: 15px; }
 
-.high-val { color: #ff3e3e !important; text-shadow: 0 0 10px rgba(255,62,62,0.5); }
+.high-val { color: #ff3e3e !important; text-shadow: 0 0 10px rgba(255,62,62,0.4); }
 .dpi-txt { color: #00ff99 !important; font-weight: bold; border: none !important; }
 
 #btnCopiar {
- width: 100%; padding: 14px; margin-top: 20px; border-radius: 12px;
- border: 2px solid #fff; background: transparent; color: #fff; 
- font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s;
+ width: 100%; padding: 12px; margin-top: 18px; border-radius: 10px;
+ border: 1px solid #fff; background: transparent; color: #fff; 
+ font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s;
 }
 </style>
 </head>
@@ -73,11 +69,11 @@ input::placeholder { color: #444; }
 <div class="panel" id="login-screen">
     <h2>Acesso Restrito</h2>
     <p>Insira sua chave para acessar o gerador</p>
-    <input type="password" id="access-key" placeholder="CHAVE DE ACESSO">
+    <input type="password" id="access-key" placeholder="CHAVE DE ACESSO" style="text-align: center;">
     <button id="btnMain" onclick="validarAcesso()">Entrar no Sistema</button>
 </div>
 
-<!-- TELA PRINCIPAL (OCULTA) -->
+<!-- TELA PRINCIPAL -->
 <div class="panel hidden" id="main-screen">
     <h2>Configurações</h2>
     <p>Ajuste sua sensibilidade de hardware</p>
@@ -93,11 +89,16 @@ input::placeholder { color: #444; }
         <option value="Huawei">Huawei</option>
         <option value="Oppo">Oppo</option>
         <option value="Vivo">Vivo</option>
+        <option value="Tecno">Tecno</option>
+        <option value="Google">Google Pixel</option>
+        <option value="Asus">Asus / ROG</option>
     </select>
 
     <select id="modelo">
         <option value="">Selecione o Modelo</option>
     </select>
+
+    <input type="text" id="manual-model" placeholder="OU DIGITE A MARCA E MODELO AQUI">
 
     <div class="btn-group">
         <button class="btn-opt" onclick="setNivel('Baixa', this)">Sensi Baixa</button>
@@ -124,36 +125,32 @@ let nivelSelecionado = "Média";
 const CHAVE_OFICIAL = "GERADORFF2026V1";
 
 const bancoDados = {
-    "Xiaomi": ["Poco X5 Pro", "Poco F5", "Redmi Note 12", "Redmi Note 13", "Poco X3 Pro", "Xiaomi 13 Ultra", "Redmi 12", "Black Shark 5"],
-    "Samsung": ["S24 Ultra", "S23 FE", "A54 5G", "A34", "A14", "S20 FE", "M54", "A73", "S21 Ultra", "Note 20 Ultra"],
-    "Apple": ["iPhone 15 Pro Max", "iPhone 14 Plus", "iPhone 13 Pro", "iPhone 12 Mini", "iPhone 11 Pro", "iPhone XR", "iPhone 8 Plus", "iPhone 15"],
-    "Motorola": ["Edge 40 Neo", "Moto G84", "Moto G54", "Edge 30 Ultra", "Moto G73", "Moto G200", "Razr 40 Ultra"],
-    "Realme": ["Realme C67", "Realme 11 Pro+", "Realme GT3", "Realme C55", "Realme 10 Pro"],
-    "Infinix": ["Note 30 Pro", "Hot 40 Pro", "Zero 30", "Smart 8"],
-    "Huawei": ["P60 Pro", "Mate 50", "Nova 11 Pro"],
-    "Oppo": ["Find X6 Pro", "Reno 10", "A78"],
-    "Vivo": ["X100 Pro", "V29", "Y78"]
+    "Xiaomi": ["Poco X6 Pro", "Poco F5", "Redmi Note 13", "Poco X3 GT", "Xiaomi 14 Ultra", "Redmi 12", "Black Shark 5 Pro", "Mi 11T Pro"],
+    "Samsung": ["S24 Ultra", "S23 FE", "A55 5G", "A35", "M54", "A73", "S21 FE", "Note 20", "Tab S9", "Z Flip 5"],
+    "Apple": ["iPhone 15 Pro Max", "iPhone 14 Pro", "iPhone 13", "iPhone 12 Pro", "iPhone 11", "iPhone XR", "iPhone 8 Plus", "iPad Pro M2"],
+    "Motorola": ["Edge 50 Pro", "Moto G84", "Moto G54", "Edge 30 Fusion", "Moto G73", "Moto G200", "Razr 50 Ultra", "Moto G34"],
+    "Realme": ["Realme GT5", "Realme 12 Pro+", "Realme C67", "Realme 11x", "Realme GT Master", "Realme Narzo 60"],
+    "Infinix": ["Note 40 Pro", "Hot 40 Pro", "Zero 30 5G", "GT 10 Pro", "Free Fire Edition"],
+    "Huawei": ["Pura 70 Ultra", "Mate 60 Pro", "Nova 12", "P50 Pro"],
+    "Oppo": ["Find X7 Ultra", "Reno 11", "A98", "K11"],
+    "Vivo": ["X100 Ultra", "V30 Pro", "Y100", "iQOO 12 Pro"],
+    "Tecno": ["Pova 6 Pro", "Camon 30", "Phantom X2"],
+    "Google": ["Pixel 8 Pro", "Pixel 7a", "Pixel 6"],
+    "Asus": ["ROG Phone 8", "Zenfone 10", "ROG Phone 6D"]
 };
 
 function validarAcesso() {
-    const key = document.getElementById('access-key').value;
-    if(key === CHAVE_OFICIAL) {
+    if(document.getElementById('access-key').value === CHAVE_OFICIAL) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('main-screen').classList.remove('hidden');
-    } else {
-        alert("CHAVE INCORRETA!");
-    }
+    } else { alert("CHAVE INCORRETA!"); }
 }
 
 function carregarModelos() {
     const marca = document.getElementById('marca').value;
     const select = document.getElementById('modelo');
     select.innerHTML = '<option value="">Selecione o Modelo</option>';
-    if(marca) {
-        bancoDados[marca].sort().forEach(m => {
-            select.innerHTML += `<option value="${m}">${m}</option>`;
-        });
-    }
+    if(marca) { bancoDados[marca].sort().forEach(m => { select.innerHTML += `<option value="${m}">${m}</option>`; }); }
 }
 
 function setNivel(nivel, el) {
@@ -165,15 +162,19 @@ function setNivel(nivel, el) {
 function rand(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
 
 function gerarSensi() {
-    const mod = document.getElementById('modelo').value;
-    if(!mod) return alert("Selecione o dispositivo!");
+    const modSelect = document.getElementById('modelo').value;
+    const modManual = document.getElementById('manual-model').value.trim();
+    
+    const finalModel = modManual !== "" ? modManual : modSelect;
+
+    if(!finalModel || finalModel === "Selecione o Modelo") return alert("Escolha ou digite um modelo!");
     
     let g, r, m2, m4, btn, dpi;
     if(nivelSelecionado === "Baixa") { g=rand(98,105); r=rand(95,102); m2=rand(90,98); m4=rand(88,95); btn=58; dpi=520; }
-    else if(nivelSelecionado === "Média") { g=rand(106,118); r=rand(103,112); m2=rand(99,108); m4=rand(96,105); btn=48; dpi=680; }
-    else { g=rand(120,150); r=rand(115,140); m2=rand(110,135); m4=rand(105,130); btn=38; dpi=980; }
+    else if(nivelSelecionado === "Média") { g=rand(106,122); r=rand(103,115); m2=rand(99,110); m4=rand(96,108); btn=48; dpi=720; }
+    else { g=rand(125,155); r=rand(120,145); m2=rand(115,138); m4=rand(110,135); btn=38; dpi=1050; }
 
-    document.getElementById('resMod').innerText = mod;
+    document.getElementById('resMod').innerText = finalModel.toUpperCase();
     document.getElementById('resGeral').innerText = g;
     document.getElementById('resRed').innerText = r;
     document.getElementById('res2x').innerText = m2;
@@ -226,3 +227,4 @@ window.onresize=init; init(); draw();
 </script>
 </body>
 </html>
+ 
