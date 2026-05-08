@@ -8,31 +8,29 @@
 *{ box-sizing:border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
 body{ margin:0; height:100vh; background:#000; color:#fff; display:flex; align-items:center; justify-content:center; overflow: hidden; }
 
-/* FUNDO ANIMADO */
 #canvas-bg { position:fixed; top:0; left:0; z-index:0; }
 
 .panel{ 
  position:relative; z-index:2; width:95%; max-width:450px; 
  background:rgba(8, 8, 8, 0.98); border: 1px solid #333; 
  border-radius:30px; padding:30px; text-align: center;
- box-shadow: 0 0 50px rgba(0,0,0,0.9); transition: 0.5s;
+ box-shadow: 0 0 50px rgba(0,0,0,0.9);
 }
 
 .hidden { display: none; }
 
-/* ABAS DE NAVEGAÇÃO */
-.nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+.nav-tabs { display: flex; gap: 8px; margin-bottom: 25px; }
 .nav-btn { 
  flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #333;
- background: #0c0c0c; color: #777; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.3s;
+ background: #0c0c0c; color: #666; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.3s;
 }
-.nav-btn.active { color: #fff; border-color: #fff; background: #1a1a1a; box-shadow: 0 0 15px rgba(255,255,255,0.15); }
+.nav-btn.active { color: #fff; border-color: #fff; background: #1a1a1a; box-shadow: 0 0 10px rgba(255,255,255,0.15); }
 
-h2 { font-size: 1.8rem; margin-bottom: 5px; font-weight: 800; }
+h2 { font-size: 1.6rem; margin-bottom: 5px; font-weight: 800; }
 p { font-size: 0.85rem; color: #666; margin-bottom: 25px; }
 
 input, select { 
- width: 100%; padding: 14px; margin-top: 12px; border-radius: 12px; 
+ width: 100%; padding: 14px; margin-top: 10px; border-radius: 12px; 
  border: 1px solid #333; background: #0c0c0c; color: #fff; outline: none; font-size: 14px;
 }
 
@@ -49,27 +47,25 @@ input, select {
  text-transform: uppercase;
 }
 
-/* CAIXAS DE INFORMAÇÃO ILUMINADAS */
-.info-container { max-height: 420px; overflow-y: auto; padding-right: 5px; }
 .info-box {
- background: #0c0c0c; border: 2px solid #fff; border-radius: 18px;
- padding: 22px; margin-bottom: 25px; text-align: left;
- box-shadow: 0 0 20px rgba(255, 255, 255, 0.25); /* Brilho Branco */
+ background: #0c0c0c; border: 2px solid #fff; border-radius: 15px;
+ padding: 22px; margin-top: 15px; text-align: left;
+ box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+ max-height: 380px; overflow-y: auto;
 }
-.info-box h3 { font-size: 16px; color: #fff; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
-.info-box p { font-size: 13.5px; color: #ccc; line-height: 1.7; margin-bottom: 0; }
 
-/* RESULTADO */
 .result-box {
  margin-top: 25px; padding: 22px; background: rgba(255, 255, 255, 0.02);
  border: 1px solid #222; border-radius: 20px; text-align: left; display: none;
+ animation: slideUp 0.5s ease;
 }
+@keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
 .result-box div { margin: 10px 0; font-size: 14px; color: #aaa; border-bottom: 1px solid #161616; padding-bottom: 6px; }
 .result-box b { color: #fff; float: right; }
-.high-val { color: #ff3e3e !important; text-shadow: 0 0 10px rgba(255,62,62,0.4); }
-.dpi-txt { color: #00ff99 !important; font-weight: bold; border: none !important; }
+.dpi-txt { color: #00ff99 !important; font-weight: bold; }
 
-#btnCopiar { width: 100%; padding: 14px; margin-top: 20px; border-radius: 12px; border: 2px solid #fff; background: transparent; color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s; }
+#btnCopiar { width: 100%; padding: 14px; margin-top: 15px; border-radius: 12px; border: 2px solid #fff; background: transparent; color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s; }
 #btnCopiar:active { background: #fff; color: #000; }
 </style>
 </head>
@@ -77,11 +73,11 @@ input, select {
 
 <canvas id="canvas-bg"></canvas>
 
-<!-- LOGIN -->
+<!-- TELA DE LOGIN -->
 <div class="panel" id="login-screen">
     <h2>Acesso Restrito</h2>
     <p>Insira sua chave para acessar o sistema</p>
-    <input type="password" id="access-key" placeholder="CHAVE DE ACESSO OFICIAL" style="text-align: center;">
+    <input type="password" id="access-key" placeholder="GERADORFF2026V1" style="text-align: center;">
     <button id="btnMain" onclick="validarAcesso()">Entrar no Sistema</button>
 </div>
 
@@ -89,97 +85,72 @@ input, select {
 <div class="panel hidden" id="main-screen">
     
     <div class="nav-tabs">
-        <button class="nav-btn active" id="tab-sensi" onclick="switchTab('sensi')">Sensibilidade</button>
+        <button class="nav-btn active" id="tab-sensi" onclick="switchTab('sensi')">Mobile</button>
+        <button class="nav-btn" id="tab-mob" onclick="switchTab('mob')">Mobilador</button>
         <button class="nav-btn" id="tab-info" onclick="switchTab('info')">Informações</button>
     </div>
 
-    <!-- CONTEÚDO SENSIBILIDADE -->
+    <!-- MOBILE -->
     <div id="content-sensi">
-        <h2>Configurações</h2>
-        <p>Ajuste sua sensibilidade de hardware</p>
-        
         <select id="marca" onchange="carregarModelos()">
             <option value="">Selecione a Marca</option>
             <option value="Xiaomi">Xiaomi</option>
             <option value="Samsung">Samsung</option>
-            <option value="Apple">iPhone (iOS)</option>
+            <option value="Apple">iPhone</option>
             <option value="Motorola">Motorola</option>
-            <option value="Realme">Realme</option>
-            <option value="Infinix">Infinix</option>
-            <option value="Oppo">Oppo</option>
-            <option value="Vivo">Vivo</option>
-            <option value="Tecno">Tecno</option>
         </select>
-
-        <select id="modelo">
-            <option value="">Selecione o Modelo</option>
-        </select>
-
+        <select id="modelo"><option value="">Selecione o Modelo</option></select>
         <input type="text" id="manual-model" placeholder="OU DIGITE A MARCA E MODELO AQUI">
-
+        
         <div class="btn-group">
             <button class="btn-opt" onclick="setNivel('Baixa', this)">Sensi Baixa</button>
             <button class="btn-opt active" onclick="setNivel('Média', this)">Sensi Média</button>
             <button class="btn-opt" onclick="setNivel('Alta', this)">Sensi Alta</button>
         </div>
+        <button id="btnMain" onclick="gerarSensi('mobile')">Gerar Configuração</button>
+    </div>
 
-        <button id="btnMain" onclick="gerarSensi()">Gerar Configuração</button>
+    <!-- MOBILADOR -->
+    <div id="content-mob" class="hidden">
+        <input type="text" id="mob-cell" placeholder="MARCA DO CELULAR">
+        <input type="text" id="mob-teclado" placeholder="MARCA DO TECLADO">
+        <input type="text" id="mob-mouse" placeholder="MARCA DO MOUSE">
+        
+        <div class="btn-group">
+            <button class="btn-opt" onclick="setNivel('Baixa', this)">Sensi Baixa</button>
+            <button class="btn-opt active" onclick="setNivel('Média', this)">Sensi Média</button>
+            <button class="btn-opt" onclick="setNivel('Alta', this)">Sensi Alta</button>
+        </div>
+        <button id="btnMain" onclick="gerarSensi('mobilador')">Gerar Sensi Mobilador</button>
+    </div>
 
-        <div class="result-box" id="result">
-            <div>Modelo: <b id="resMod">--</b></div>
-            <div>Geral: <b id="resGeral" class="high-val">--</b></div>
-            <div>Red Dot: <b id="resRed" class="high-val">--</b></div>
-            <div>Mira 2x: <b id="res2x" class="high-val">--</b></div>
-            <div>Mira 4x: <b id="res4x" class="high-val">--</b></div>
-            <div>Botão de Tiro: <b id="resBtn">--</b></div>
-            <div class="dpi-txt">DPI Recomendada: <b id="resDpi" class="dpi-txt">--</b></div>
-            <button id="btnCopiar" onclick="copiarSensi()">Copiar Sensibilidade</button>
+    <!-- INFORMAÇÕES -->
+    <div id="content-info" class="hidden">
+        <div class="info-box">
+            <h3>Guia de Otimização</h3>
+            <p>O segredo do 'Full Capa' reside no ajuste da aceleração do eixo Y. Ao utilizar os valores sugeridos, você equilibra o tempo de resposta do touch com a DPI do sistema.</p>
+            <p><b>Dica:</b> No Mobilador, priorize o ajuste de DPI diretamente no software do seu mouse para evitar o 'pixel skipping'.</p>
         </div>
     </div>
 
-    <!-- CONTEÚDO INFORMAÇÕES -->
-    <div id="content-info" class="hidden">
-        <h2>Guia Técnico</h2>
-        <div class="info-container">
-            <div class="info-box">
-                <h3>O que é o Auxílio?</h3>
-                <p>Este gerador realiza uma calibração lógica baseada nas especificações do seu hardware. Ele calcula a relação ideal entre a taxa de atualização da tela (Hz) e a densidade de pixels (DPI) para que a resposta do toque seja instantânea.</p>
-            </div>
-
-            <div class="info-box">
-                <h3>Como dar só Capa?</h3>
-                <p>O segredo está na aceleração do eixo Y. Ao configurar os valores de sensibilidade acima de 100 e utilizar a DPI recomendada, você reduz o atrito digital da mira. Isso faz com que o movimento de subir o dedo 'grude' com mais facilidade na cabeça (bone_head) do oponente, evitando que os tiros fiquem presos no peito.</p>
-            </div>
-
-            <div class="info-box">
-                <h3>Função da DPI Alta</h3>
-                <p>Uma DPI elevada permite que o sistema processe mais informações de movimento em uma distância menor percorrida pelo seu dedo. Isso é essencial para jogadores de Sensi Alta que buscam uma movimentação rápida e um controle de recuo (recoil) perfeito em miras 2x e 4x.</p>
-            </div>
-
-            <div class="info-box">
-                <h3>Otimização de Botão</h3>
-                <p>O tamanho do botão de tiro influencia diretamente no tempo de ativação do disparo. Botões menores entre 38% e 48% permitem um arrasto vertical mais livre, facilitando o famoso 'capa de perto' com armas de um tiro ou SMGs.</p>
-            </div>
-        </div>
+    <!-- BOX DE RESULTADO -->
+    <div class="result-box" id="result">
+        <div>Dispositivo: <b id="resMod">--</b></div>
+        <div>Geral: <b id="resGeral" style="color:#ff3e3e;">--</b></div>
+        <div>Red Dot: <b id="resRed">--</b></div>
+        <div>Mira 2x: <b id="res2x">--</b></div>
+        <div>Mira 4x: <b id="res4x">--</b></div>
+        <div>Botão / Velocidade: <b id="resBtn">--</b></div>
+        <div class="dpi-txt">DPI Recomendada: <b id="resDpi" class="dpi-txt">--</b></div>
+        <button id="btnCopiar" onclick="copiarSensi()">Copiar Sensibilidade</button>
     </div>
 
 </div>
 
 <script>
 let nivelSelecionado = "Média";
+let modoAtual = "mobile";
 const CHAVE_OFICIAL = "GERADORFF2026V1";
-
-const bancoDados = {
-    "Xiaomi": ["Poco X6 Pro", "Redmi Note 13", "Poco F5", "Poco X3 Pro"],
-    "Samsung": ["S24 Ultra", "A55 5G", "S23 FE", "S20 FE", "A14"],
-    "Apple": ["iPhone 15 Pro Max", "iPhone 14", "iPhone 13", "iPhone 11"],
-    "Motorola": ["Edge 50 Pro", "Moto G84", "Moto G54", "Edge 30 Fusion"],
-    "Realme": ["Realme C67", "Realme 11 Pro+", "Realme GT Master"],
-    "Infinix": ["Note 40 Pro", "Hot 40 Pro", "Zero 30"],
-    "Vivo": ["X100 Ultra", "V30 Pro", "Y78"],
-    "Oppo": ["Find X7", "Reno 11"],
-    "Tecno": ["Pova 6 Pro", "Camon 30"]
-};
 
 function validarAcesso() {
     if(document.getElementById('access-key').value === CHAVE_OFICIAL) {
@@ -189,17 +160,21 @@ function validarAcesso() {
 }
 
 function switchTab(tab) {
+    modoAtual = tab;
     document.getElementById('content-sensi').classList.toggle('hidden', tab !== 'sensi');
+    document.getElementById('content-mob').classList.toggle('hidden', tab !== 'mob');
     document.getElementById('content-info').classList.toggle('hidden', tab !== 'info');
-    document.getElementById('tab-sensi').classList.toggle('active', tab === 'sensi');
-    document.getElementById('tab-info').classList.toggle('active', tab === 'info');
+    document.getElementById('result').style.display = 'none';
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
 }
 
 function carregarModelos() {
     const marca = document.getElementById('marca').value;
     const select = document.getElementById('modelo');
+    const dados = {"Xiaomi":["Poco X6 Pro","Redmi Note 13"],"Samsung":["S24 Ultra","A55 5G"],"Apple":["iPhone 15 Pro"],"Motorola":["Edge 50 Pro"]};
     select.innerHTML = '<option value="">Selecione o Modelo</option>';
-    if(marca) { bancoDados[marca].sort().forEach(m => { select.innerHTML += `<option value="${m}">${m}</option>`; }); }
+    if(marca) dados[marca].forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
 }
 
 function setNivel(nivel, el) {
@@ -208,26 +183,29 @@ function setNivel(nivel, el) {
     el.classList.add('active');
 }
 
-function rand(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
+function gerarSensi(tipo) {
+    let mod, g, r, m2, m4, btn, dpi;
+    if(tipo === 'mobile') {
+        mod = document.getElementById('manual-model').value || document.getElementById('modelo').value;
+        if(!mod || mod === "Selecione o Modelo") return alert("Selecione o celular!");
+        btn = "42%"; dpi = "820";
+    } else {
+        const cell = document.getElementById('mob-cell').value;
+        const mouse = document.getElementById('mob-mouse').value;
+        if(!cell || !mouse) return alert("Preencha os campos!");
+        mod = `${cell} + ${mouse}`;
+        btn = "Máxima (Android)"; dpi = "1200 Mouse";
+    }
 
-function gerarSensi() {
-    const modManual = document.getElementById('manual-model').value.trim();
-    const modSelect = document.getElementById('modelo').value;
-    const finalMod = modManual !== "" ? modManual : modSelect;
+    g = nivelSelecionado === "Alta" ? 148 : (nivelSelecionado === "Média" ? 112 : 99);
+    r = g - 4; m2 = g - 8; m4 = g - 12;
 
-    if(!finalMod || finalMod === "Selecione o Modelo") return alert("Escolha ou digite um modelo!");
-    
-    let g, r, m2, m4, btn, dpi;
-    if(nivelSelecionado === "Baixa") { g=rand(98,105); r=rand(95,102); btn=58; dpi=520; }
-    else if(nivelSelecionado === "Média") { g=rand(106,122); r=rand(103,115); btn=48; dpi=720; }
-    else { g=rand(125,155); r=rand(120,145); btn=38; dpi=1050; }
-
-    document.getElementById('resMod').innerText = finalMod.toUpperCase();
+    document.getElementById('resMod').innerText = mod.toUpperCase();
     document.getElementById('resGeral').innerText = g;
     document.getElementById('resRed').innerText = r;
-    document.getElementById('res2x').innerText = rand(100,120);
-    document.getElementById('res4x').innerText = rand(95,115);
-    document.getElementById('resBtn').innerText = btn + "%";
+    document.getElementById('res2x').innerText = m2;
+    document.getElementById('res4x').innerText = m4;
+    document.getElementById('resBtn').innerText = btn;
     document.getElementById('resDpi').innerText = dpi;
     document.getElementById('result').style.display = 'block';
 }
@@ -241,10 +219,11 @@ function copiarSensi() {
     const btn = document.getElementById('resBtn').innerText;
     const dpi = document.getElementById('resDpi').innerText;
 
-    const texto = `🎯 *SENSIBILIDADE ATUALIZADA* 🎯
+    const texto = `🎯 *CONFIGURAÇÃO EXECUTOR* 🎯
 
 📱 *DISPOSITIVO:* ${mod}
-⚡ *INTENSIDADE:* ${nivelSelecionado}
+🔥 *NÍVEL:* ${nivelSelecionado.toUpperCase()}
+🕹️ *MODO:* ${modoAtual === 'sensi' ? 'MOBILE' : 'MOBILADOR'}
 
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 🔘 *GERAL:* ${g}
@@ -253,26 +232,25 @@ function copiarSensi() {
 🔬 *MIRA 4X:* ${m4}
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 
-⚙️ *DPI:* ${dpi}
-🎮 *BOTÃO:* ${btn}
+⚙️ *DPI SISTEMA:* ${dpi}
+🎮 *AJUSTE FINAL:* ${btn}
 
-✅ *CONFIGURAÇÃO APLICADA*`;
+✅ *SENSI APLICADA COM SUCESSO*`;
 
     navigator.clipboard.writeText(texto).then(() => {
         const b = document.getElementById('btnCopiar');
-        b.innerText = "COPIADO! ✅";
-        setTimeout(() => b.innerText = "Copiar Sensibilidade", 2000);
+        b.innerText = "COPIADO COM SUCESSO! ✅";
+        b.style.color = "#00ff99"; b.style.borderColor = "#00ff99";
+        setTimeout(() => { b.innerText = "Copiar Sensibilidade"; b.style.color = "#fff"; b.style.borderColor = "#fff"; }, 2000);
     });
 }
 
-/* BACKGROUND ANIMADO */
-const canvas = document.getElementById('canvas-bg');
-const ctx = canvas.getContext('2d');
+/* BACKGROUND */
+const canvas = document.getElementById('canvas-bg'); const ctx = canvas.getContext('2d');
 let w, h, p = [];
-function init() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; p=[]; for(let i=0;i<85;i++) p.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6}); }
-function draw() { ctx.clearRect(0,0,w,h); ctx.fillStyle="rgba(255,255,255,0.2)"; ctx.strokeStyle="rgba(255,255,255,0.06)"; p.forEach((i,idx)=>{ i.x+=i.vx; i.y+=i.vy; if(i.x<0||i.x>w)i.vx*=-1; if(i.y<0||i.y>h)i.vy*=-1; ctx.beginPath(); ctx.arc(i.x,i.y,1.5,0,Math.PI*2); ctx.fill(); for(let j=idx+1;j<p.length;j++){ let d=Math.hypot(i.x-p[j].x,i.y-p[j].y); if(d<120){ ctx.beginPath(); ctx.moveTo(i.x,i.y); ctx.lineTo(p[j].x,p[j].y); ctx.stroke(); } } }); requestAnimationFrame(draw); }
+function init() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; p=[]; for(let i=0;i<75;i++) p.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6}); }
+function draw() { ctx.clearRect(0,0,w,h); ctx.fillStyle="rgba(255,255,255,0.15)"; ctx.strokeStyle="rgba(255,255,255,0.05)"; p.forEach((i,idx)=>{ i.x+=i.vx; i.y+=i.vy; if(i.x<0||i.x>w)i.vx*=-1; if(i.y<0||i.y>h)i.vy*=-1; ctx.beginPath(); ctx.arc(i.x,i.y,1.5,0,7); ctx.fill(); for(let j=idx+1;j<p.length;j++){ if(Math.hypot(i.x-p[j].x,i.y-p[j].y)<120){ ctx.beginPath(); ctx.moveTo(i.x,i.y); ctx.lineTo(p[j].x,p[j].y); ctx.stroke(); } } }); requestAnimationFrame(draw); }
 window.onresize=init; init(); draw();
 </script>
 </body>
 </html>
-
